@@ -111,7 +111,11 @@ async def handle_message(client, message: Message):
 
     try:
         file_path, thumbnail_path, video_title = await download_video(terabox_link, reply_msg, user_mention, user_id)
+        if not file_path:
+            logging.warning(f"Download failed or returned None for link: {terabox_link}")
+            return  # अगर download fail हुआ तो आगे upload न करें
         await upload_video(client, file_path, thumbnail_path, video_title, reply_msg, dump_id, user_mention, user_id, message)
+
     except Exception as e:
         logging.error(f"Error handling message: {e}")
         await reply_msg.edit_text("Api has given a Broken Download Link. Dont Contact the Owner for this Issue.")
